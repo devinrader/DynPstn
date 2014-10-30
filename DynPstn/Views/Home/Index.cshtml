@@ -1,0 +1,82 @@
+﻿@using Twilio;
+
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<DynPstn.ViewModels.HomeViewModel>
+<html>
+<head>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <h3>
+            Location (Currently: @Model.CurrentLocation)
+        </h3>
+        <div class="container">
+            <p>Your current location is set as @Model.CurrentLocation.  Calls will be routed to @Model.CurrentLocationDevice.Name (@Model.CurrentLocationDevice.AssignedNumber)</p>
+            <p>change your location below:</p>
+            <form action="/location" method="post">
+                <select id="location" name="location">
+                    <option value="US">United States</option>
+                    <option value="EN">England</option>
+                </select>
+            </form>
+        </div>
+
+        <h3>Your Devices</h3>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <td>Device Name</td>
+                    <td>Assigned Number</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+
+                    foreach (var device in Model.Devices)
+                    {
+                        <tr><td>@device.Name</td><td>@device.AssignedNumber</td></tr>                        
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr><td colspan="3"><a href="#" id="addDevice">Add Device</a></td></tr>
+            </tfoot>
+        </table>
+
+        <h3>Your Twilio Phone Numbers</h3>
+            <div>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <td>Friendly Name</td>
+                            <td>Phone Number</td>
+                            <td>Location</td>
+                            <td>Route</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+
+                            foreach (var number in Model.IncomingPhoneNumbers)
+                            {
+                                <tr><td>@number.FriendlyName</td><td>@number.PhoneNumber</td><td></td><td></td></tr>
+                            }
+                        }
+                    </tbody>
+
+
+                </table>
+            </div>
+    </div>
+    <script type="text/javascript" src="~/Scripts/jquery-2.1.1.min.js"></script>
+    <script>
+        $(function () {
+            $(document).on('change', '#location', function () {
+                $(this).closest('form').trigger('submit');
+            });
+
+            $("#location option[value='@Model.CurrentLocation']").prop('selected', true);
+        });
+    </script>
+</body>
+</html>
